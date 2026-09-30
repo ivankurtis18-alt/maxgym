@@ -1,0 +1,39 @@
+---
+/**
+ * Personalni trening — posebna stranica, isti sistem kao početna.
+ * Tok: uvod (hero, pristup, za koga) → iskustvo (proces) →
+ * ljudi (treneri) → radnja (završni poziv u podnožju).
+ */
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PtHero from '../components/pt/PtHero.astro';
+import PtPristup from '../components/pt/PtPristup.astro';
+import PtZaKoga from '../components/pt/PtZaKoga.astro';
+import PtProces from '../components/pt/PtProces.astro';
+import PtTreneri from '../components/pt/PtTreneri.astro';
+
+const path = '/personalni-trening';
+---
+
+<Base
+  title="Personalni trening — Max Gym & Fitness, Borča"
+  description="Personalni trening u Max Gym & Fitness, Julije Delere 43, Borča: rad jedan na jedan sa trenerom, plan prilagođen tvom cilju, tehnika i praćenje napretka."
+>
+  <Header current={path} />
+  <main id="main">
+    <PtHero />
+    <PtPristup />
+    <PtZaKoga />
+    <PtProces />
+    <PtTreneri />
+  </main>
+  <Footer
+    current={path}
+    eyebrow="Sledeći korak"
+    text="Pozovi i dogovori prvi termin. Upoznaćeš trenera, razgovaraćete o cilju i od prvog treninga ćeš imati plan."
+    primaryLabel="Zakaži trening"
+  >
+    <Fragment slot="title">Spreman za trening po <em>meri?</em></Fragment>
+  </Footer>
+</Base>

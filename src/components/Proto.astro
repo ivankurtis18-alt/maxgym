@@ -1,0 +1,12 @@
+---
+/** Oznaka „privremeno" — vidljiva samo dok je site.prototype uključen. */
+import { site } from '../data/site';
+
+interface Props {
+  text?: string;
+}
+
+const { text = 'Privremeno' } = Astro.props;
+---
+
+{site.prototype && <span class="proto">{text}</span>}

@@ -1,0 +1,91 @@
+---
+import Band from './Band.astro';
+
+const reasons = [
+  {
+    title: 'Oprema koja radi',
+    text: 'Sala je opremljena za ozbiljan trening, od prvog zagrevanja do poslednje serije. Sve je na svom mestu i spremno za rad.',
+  },
+  {
+    title: 'Atmosfera za rad',
+    text: 'Dolaziš da treniraš, ne da poziraš. Bez pritiska i bez komentara — samo ljudi koji razumeju zašto su tu.',
+  },
+  {
+    title: 'Pomoć kad zatreba',
+    text: 'Nisi siguran u tehniku ili ne znaš odakle da kreneš? Pitaj. Trener će ti pomoći da radiš pametno i bezbedno.',
+  },
+  {
+    title: 'Blizu kuće',
+    text: 'Teretana u komšiluku, u Borči. Kratak put znači manje izgovora i više treninga.',
+  },
+];
+---
+
+<section class="zasto" aria-labelledby="zasto-title">
+  <Band image="wideHall" eyebrow="Zašto Max" titleId="zasto-title">
+    Ovde se <em>trenira.</em>
+  </Band>
+
+  <div class="zasto__body wrap grid section">
+    <p class="zasto__intro lede" data-reveal>
+      Nema tu velike filozofije. Dobra sala, pravi ljudi i prostor u kome možeš da se posvetiš
+      svom treningu.
+    </p>
+
+    <ul class="zasto__list">
+      {
+        reasons.map((r) => (
+          <li class="zasto__item" data-reveal>
+            <h3 class="h3">{r.title}</h3>
+            <p class="muted">{r.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .zasto__body {
+    row-gap: var(--s-7);
+    padding-top: var(--head-gap);
+  }
+
+  .zasto__intro {
+    grid-column: 1 / 5;
+    align-self: start;
+    color: var(--chalk-2);
+  }
+
+  .zasto__list {
+    grid-column: 6 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2.5rem, 5vw, 4.5rem) var(--gap);
+  }
+
+  .zasto__item {
+    display: grid;
+    align-content: start;
+    gap: var(--s-4);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .zasto__item p {
+    max-width: 38ch;
+  }
+
+  @media (max-width: 960px) {
+    .zasto__intro,
+    .zasto__list {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .zasto__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,295 @@
+---
+import { nav, site } from '../data/site';
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+import { put } from '../lib/putanja';
+
+interface Props {
+  /** Putanja trenutne podstranice (npr. '/personalni-trening'); na početnoj izostaje */
+  current?: string;
+}
+
+const { current } = Astro.props;
+---
+
+<header class="hdr" data-header>
+  <div class="hdr__bar wrap">
+    <a
+      class="hdr__logo"
+      href={current ? put('/') : '#top'}
+      aria-label={current ? `${site.name} — početna` : `${site.name} — na vrh stranice`}
+    >
+      <Wordmark />
+    </a>
+
+    <button
+      class="hdr__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu"
+      data-menu-toggle
+    >
+      <span class="hdr__toggle-text" data-menu-label>Meni</span>
+      <Icon name="menu" class="hdr__icon hdr__icon--open" />
+      <Icon name="close" class="hdr__icon hdr__icon--close" />
+    </button>
+
+    <nav class="hdr__nav" id="menu" aria-label="Glavna navigacija" data-menu>
+      <ul class="hdr__links">
+        {
+          nav.map((item, i) => (
+            <li style={`--i:${i}`}>
+              <a
+                class:list={['hdr__link', { 'is-current': item.href === current }]}
+                href={put(item.href)}
+                aria-current={item.href === current ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="hdr__panel-foot">
+        <p class="label">{site.address.street} · {site.address.district}</p>
+        <a class="btn" href={site.phone.href}>
+          <span>Pozovi {site.phone.display}</span>
+          <Icon name="phone" />
+        </a>
+      </div>
+    </nav>
+
+    <a class="btn btn--ghost btn--sm hdr__cta" href={site.phone.href}>
+      <span>Pozovi</span>
+      <Icon name="phone" />
+    </a>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+    border-bottom: 1px solid transparent;
+  }
+
+  /* Sklanja se pri skrolu nadole (main.ts). Transform postoji samo
+     u ovom stanju, pa ne remeti fiksni mobilni meni. */
+  .hdr.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  .hdr.is-scrolled {
+    background: rgb(13 15 14 / 0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom-color: var(--line);
+  }
+
+  .hdr__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+    height: var(--header-h);
+  }
+
+  /* Unutrašnji razmak samo povećava površinu za dodir (≈ 44 px) */
+  .hdr__logo {
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    padding-block: var(--s-2);
+  }
+
+  /* Desktop navigacija */
+  .hdr__links {
+    display: flex;
+    gap: clamp(1.25rem, 2.4vw, 2.5rem);
+  }
+
+  .hdr__link {
+    position: relative;
+    display: inline-block;
+    padding-block: var(--s-2);
+    font-stretch: var(--w-cond);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--chalk-2);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .hdr__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--volt);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /* Bez razvlačenja: razmaci između stavki moraju ostati jednaki.
+     Hover posvetli, ljubičasta crta pripada samo trenutnoj sekciji. */
+  .hdr__link:hover,
+  .hdr__link.is-current {
+    color: var(--chalk);
+  }
+
+  .hdr__link.is-current::after {
+    transform: scaleX(1);
+  }
+
+  .hdr__toggle,
+  .hdr__panel-foot {
+    display: none;
+  }
+
+  /* Mobilni i tablet: navigacija postaje ceo ekran */
+  @media (max-width: 960px) {
+    .hdr__cta {
+      display: none;
+    }
+
+    /* backdrop-filter bi zarobio fiksni meni unutar trake */
+    .hdr.is-open {
+      background: var(--ink);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .hdr__toggle {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-3);
+      min-height: 2.75rem;
+      padding-inline: var(--s-2);
+      font-stretch: var(--w-cond);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+    }
+
+    .hdr__toggle :global(.hdr__icon) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .hdr__toggle :global(.hdr__icon--close),
+    .hdr__toggle[aria-expanded='true'] :global(.hdr__icon--open) {
+      display: none;
+    }
+
+    .hdr__toggle[aria-expanded='true'] :global(.hdr__icon--close) {
+      display: block;
+    }
+
+    .hdr__nav {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(var(--header-h) + var(--s-7)) var(--gutter) var(--s-6);
+      background: var(--ink);
+      visibility: hidden;
+      opacity: 0;
+      transition:
+        opacity var(--dur) var(--ease),
+        visibility 0s linear var(--dur);
+      overflow-y: auto;
+    }
+
+    .hdr.is-open .hdr__nav {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity var(--dur) var(--ease);
+    }
+
+    .hdr__links {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Stavke izranjaju iz maske jedna za drugom (PODIZANJE),
+       podnožje panela stiže poslednje. Zatvaranje je trenutno. */
+    .hdr__links li {
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .hdr__links .hdr__link {
+      transform: translateY(105%);
+      transition:
+        transform var(--dur-slow) var(--ease),
+        font-stretch var(--dur) var(--ease);
+    }
+
+    .hdr.is-open .hdr__link {
+      transform: none;
+      transition-delay: calc(0.06s + var(--i) * 0.05s), 0s;
+    }
+
+    .hdr__panel-foot {
+      opacity: 0;
+      transform: translateY(0.75rem);
+      transition:
+        opacity var(--dur) var(--ease),
+        transform var(--dur) var(--ease);
+    }
+
+    .hdr.is-open .hdr__panel-foot {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.32s;
+    }
+
+    .hdr__link {
+      display: block;
+      padding-block: var(--s-3);
+      font-family: var(--font-display);
+      font-stretch: var(--w-tight);
+      font-weight: 800;
+      font-size: clamp(2.5rem, 11vw, 4.5rem);
+      letter-spacing: 0;
+      line-height: 1;
+      color: var(--chalk);
+    }
+
+    .hdr__link::after {
+      display: none;
+    }
+
+    /* Aktivna sekcija i dodir: reč se razvuče — isti gest kao
+       aktivan red u indeksu treninga */
+    .hdr__link:hover,
+    .hdr__link.is-current {
+      font-stretch: 100%;
+      color: var(--chalk);
+    }
+
+    .hdr__panel-foot {
+      display: grid;
+      gap: var(--s-4);
+      padding-top: var(--s-7);
+    }
+
+    .hdr__panel-foot .btn {
+      width: 100%;
+    }
+  }
+</style>

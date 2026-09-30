@@ -1,0 +1,110 @@
+---
+/**
+ * Za koga je personalni trening — spisak kao niz naslova.
+ * Na desktopu i tabletu se razvučena reč u svakom redu rasteže dok
+ * red prolazi kroz sredinu ekrana (motion.ts → tension), pa se
+ * spisak čita red po red, sa naprezanjem na svakom.
+ */
+const rows = [
+  {
+    lead: 'Tek',
+    word: 'počinješ',
+    text: 'Nemaš iskustva sa treningom i želiš da od prvog dana radiš kako treba, bez lutanja.',
+  },
+  {
+    lead: 'Ponovo',
+    word: 'krećeš',
+    text: 'Posle pauze želiš siguran i postepen povratak u ritam, bez preterivanja.',
+  },
+  {
+    lead: 'Treba ti',
+    word: 'plan',
+    text: 'Dolaziš redovno, ali bez jasnog plana i imaš osećaj da stojiš u mestu.',
+  },
+  {
+    lead: 'Želiš',
+    word: 'pažnju',
+    text: 'Hoćeš trenera koji prati samo tebe: tvoju tehniku, tvoj tempo, tvoja pitanja.',
+  },
+  {
+    lead: 'Hoćeš',
+    word: 'ritam',
+    text: 'Dogovoren termin je obaveza prema sebi. Lakše je istrajati kad neko računa na tebe.',
+  },
+];
+---
+
+<section class="zk section" id="za-koga" aria-labelledby="zk-title">
+  <div class="wrap">
+    <header class="zk__head grid">
+      <h2 class="zk__eyebrow label eyebrow" id="zk-title">Za koga je personalni trening</h2>
+      <p class="zk__intro lede muted" data-reveal>
+        Nije rezervisan za profesionalce. Najviše daje onima koji žele da treniraju pametno — od
+        prvog dana ili posle duge pauze.
+      </p>
+    </header>
+
+    <ul class="zk__list">
+      {
+        rows.map((row) => (
+          <li class="zk__row" data-tension>
+            <h3 class="zk__title display" data-tension-title>
+              {row.lead} <em>{row.word}</em>
+            </h3>
+            <p class="zk__text muted">{row.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .zk__head {
+    row-gap: var(--s-6);
+    margin-bottom: var(--head-gap);
+  }
+
+  .zk__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .zk__intro {
+    grid-column: 1 / 7;
+  }
+
+  .zk__list {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .zk__row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: var(--s-3);
+    align-items: end;
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .zk__title {
+    grid-column: 1 / 9;
+    font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4.75rem);
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  .zk__text {
+    grid-column: 9 / -1;
+    max-width: 36ch;
+    padding-bottom: 0.3em;
+  }
+
+  @media (max-width: 960px) {
+    .zk__intro,
+    .zk__title,
+    .zk__text {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

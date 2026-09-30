@@ -1,0 +1,210 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import Proto from './Proto.astro';
+---
+
+<section class="kontakt section" id="kontakt" aria-labelledby="kontakt-title">
+  <div class="wrap grid">
+    <p class="label eyebrow kontakt__eyebrow">Kontakt i lokacija</p>
+    <div class="kontakt__info">
+      <h2 class="display h2" id="kontakt-title" data-split>Nađi nas u <em>Borči</em></h2>
+
+      <div class="kontakt__phone" data-reveal>
+        <a class="kontakt__number" href={site.phone.href}>{site.phone.display}</a>
+        <Proto text="Privremeni broj" />
+      </div>
+
+      <dl class="kontakt__list" data-reveal>
+        <div>
+          <dt class="label">Adresa</dt>
+          <dd>
+            {site.address.street}<br />
+            {site.address.postalCode} {site.address.city} ({site.address.district})
+          </dd>
+        </div>
+        <div>
+          <dt class="label">Telefon</dt>
+          <dd><a class="link" href={site.phone.href}>{site.phone.display}</a></dd>
+        </div>
+        <div>
+          <dt class="label">Radno vreme</dt>
+          <dd>
+            {
+              site.hours.map((h) => (
+                <span class="kontakt__hours">
+                  <span>{h.days}</span>
+                  <span>{h.time}</span>
+                </span>
+              ))
+            }
+            <span class="kontakt__last muted">{site.lastEntry}</span>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="kontakt__actions" data-reveal>
+        <a class="btn" href={site.phone.href}>
+          <span>Pozovi</span>
+          <Icon name="phone" />
+        </a>
+        <a class="btn btn--ghost" href={site.maps.link} target="_blank" rel="noopener">
+          <span>Otvori u mapama</span>
+          <Icon name="external" />
+        </a>
+      </div>
+    </div>
+
+    <div class="kontakt__map" data-reveal>
+      <iframe
+        src={site.maps.embed}
+        title={`Mapa — ${site.address.street}, ${site.address.city}`}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <p class="kontakt__pin label">
+        <Icon name="pin" />
+        {site.address.street}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kontakt .grid {
+    row-gap: var(--head-gap);
+  }
+
+  .kontakt__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .kontakt__info {
+    grid-column: 1 / 6;
+    display: grid;
+    align-content: start;
+    gap: var(--s-6);
+  }
+
+  .kontakt__phone {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3) var(--s-4);
+    padding-block: var(--s-4) var(--s-2);
+  }
+
+  .kontakt__number {
+    display: inline-flex;
+    flex-direction: column;
+    font-family: var(--font-display);
+    font-stretch: var(--w-mid);
+    font-weight: 700;
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition:
+      color var(--dur) var(--ease),
+      font-stretch 0.6s var(--ease);
+  }
+
+  .kontakt__number:hover {
+    font-stretch: 100%;
+  }
+
+  .kontakt__list {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+
+  .kontakt__list > div {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: var(--s-4);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .kontakt__list dt {
+    padding-top: 0.35em;
+  }
+
+  .kontakt__hours {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kontakt__last {
+    display: block;
+    margin-top: var(--s-2);
+    font-size: var(--t-small);
+  }
+
+  .kontakt__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .kontakt__map {
+    grid-column: 7 / -1;
+    position: relative;
+    min-height: 28rem;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+  }
+
+  /* Mapa se prevodi u tamnu paletu sajta */
+  .kontakt__map iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(1) invert(0.92) contrast(0.9) brightness(0.95);
+  }
+
+  .kontakt__pin {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    background: var(--ink);
+    color: var(--chalk);
+    border-top: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    pointer-events: none;
+  }
+
+  .kontakt__pin :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (max-width: 960px) {
+    .kontakt__info,
+    .kontakt__map {
+      grid-column: 1 / -1;
+    }
+
+    .kontakt__map {
+      min-height: 22rem;
+      margin-inline: calc(-1 * var(--gutter));
+      border-inline: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .kontakt__list > div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-2);
+    }
+
+    .kontakt__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>

@@ -1,0 +1,212 @@
+---
+/**
+ * Hero personalnog treninga — novo poglavlje istog brenda.
+ * Umesto MAX-a nosi ga „1:1": isti postupak slojeva (puna slova ispod
+ * fotografije, kontura iznad), ali kompozicija je obrnuta — široka
+ * scena rada trenera i klijenta desno, znak u donjem levom uglu.
+ * Ulazak i skrol: isti heroIntro / heroScroll iz motion.ts.
+ */
+import { site } from '../../data/site';
+import Icon from '../Icon.astro';
+import Media from '../Media.astro';
+---
+
+<section class="pth" id="top" aria-labelledby="pt-title" data-hero-root>
+  <div class="pth__stage wrap">
+    <p class="pth__loc label" data-hero="loc">Personalni trening · {site.name}</p>
+
+    <span class="pth__one" aria-hidden="true" data-hero="max">1:1</span>
+
+    <figure class="pth__photo media" data-hero="photo">
+      <Media
+        image="ptHero"
+        eager
+        ratio={16 / 9}
+        art={[
+          { media: '(max-width: 560px)', ratio: 1, sizes: '100vw' },
+          { media: '(max-width: 960px)', ratio: 4 / 3, sizes: '100vw' },
+        ]}
+        widths={[640, 960, 1280, 1600, 2000]}
+        sizes="(min-width: 961px) 76vw, 100vw"
+      />
+    </figure>
+
+    <span class="pth__one pth__one--outline" aria-hidden="true" data-hero="max">1:1</span>
+
+    <div class="pth__copy" data-hero-copy>
+      <h1 class="pth__title display h1" id="pt-title" data-hero="title">
+        <span class="sr-only">Personalni trening — </span>
+        Trening napravljen <em>oko</em> tebe.
+      </h1>
+      <div class="pth__side">
+        <p class="lede muted" data-hero="text">
+          Rad jedan na jedan sa trenerom koji prati samo tebe — tvoju tehniku, tempo i cilj.
+        </p>
+        <div class="pth__actions" data-hero="actions">
+          <a class="btn" href={site.phone.href}>
+            <span>Zakaži trening</span>
+            <Icon name="phone" />
+          </a>
+          <a class="btn btn--ghost" href="#treneri">
+            <span>Upoznaj trenere</span>
+            <Icon name="arrow" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pth {
+    position: relative;
+    container-type: inline-size;
+    padding-top: calc(var(--header-h) + clamp(1.5rem, 4vw, 3rem));
+    padding-bottom: clamp(3rem, 5vw, 4rem);
+    overflow: clip;
+  }
+
+  /* „1:1" zauzima tačan deo širine kolone (--one-share). --one-em je
+     širina znaka u em jedinicama (Anybody, wdth 150, wght 900). */
+  .pth__stage {
+    --one-em: 2.2;
+    --one-share: 0.46;
+    --one-size: calc(
+      (min(100cqi, var(--page)) - 2 * var(--gutter)) * var(--one-share) / var(--one-em)
+    );
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto 1fr auto auto;
+    column-gap: var(--gap);
+  }
+
+  .pth__loc {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: clamp(1rem, 2.5vw, 2rem);
+    position: relative;
+    z-index: 3;
+  }
+
+  .pth__photo {
+    grid-column: 4 / -1;
+    grid-row: 2 / 4;
+    z-index: 2;
+    aspect-ratio: 16 / 9;
+    max-height: calc(100svh - var(--header-h) - 21rem);
+    min-height: 22rem;
+    margin-right: calc(-1 * var(--gutter));
+  }
+
+  @media (min-width: 1600px) {
+    .pth__photo {
+      margin-right: 0;
+    }
+  }
+
+  .pth__photo :global(img) {
+    will-change: transform;
+  }
+
+  .pth__one {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    align-self: end;
+    justify-self: start;
+    margin-bottom: calc(var(--one-size) * -0.22);
+    font-family: var(--font-display);
+    font-stretch: 150%;
+    font-weight: 900;
+    font-size: var(--one-size);
+    line-height: 0.74;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: var(--chalk);
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .pth__one--outline {
+    z-index: 3;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.12vw) var(--chalk);
+  }
+
+  .pth__copy {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: var(--s-6);
+    padding-top: calc(var(--one-size) * 0.22 + clamp(1.25rem, 2vw, 1.75rem));
+    position: relative;
+    z-index: 3;
+  }
+
+  .pth__title {
+    grid-column: 1 / 7;
+    align-self: end;
+  }
+
+  .pth__side {
+    grid-column: 8 / -1;
+    align-self: end;
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .pth__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  /* Tablet i mobilni: scena preko cele širine, „1:1" ulazi u njeno dno */
+  @media (max-width: 960px) {
+    .pth__stage {
+      --one-share: 0.62;
+    }
+
+    .pth__photo {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin-inline: calc(-1 * var(--gutter));
+      aspect-ratio: 4 / 3;
+      max-height: none;
+      min-height: 0;
+    }
+
+    .pth__one {
+      grid-row: 3;
+      margin-top: calc(var(--one-size) * -0.5);
+      margin-bottom: 0;
+    }
+
+    .pth__copy {
+      padding-top: clamp(1.5rem, 5vw, 2.5rem);
+    }
+
+    .pth__title,
+    .pth__side {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .pth__photo {
+      aspect-ratio: 1 / 1;
+    }
+
+    /* Razvučena reč ostaje potpis i na telefonu — „oko" je kratka */
+    .pth__title em {
+      font-stretch: 150%;
+    }
+
+    .pth__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>

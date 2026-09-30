@@ -1,0 +1,275 @@
+---
+/**
+ * Treneri — ljudski centar stranice.
+ * Portreti u cik-cak rasporedu različitih širina (ne četiri iste
+ * kartice). Veliki broj trenera prelazi donju ivicu portreta istim
+ * postupkom slojeva kao MAX i „1:1": pun ispod fotografije, kontura
+ * preko nje. Na desktopu: dubina po kolonama, a hover stavlja jednog
+ * trenera u fokus i utišava ostale.
+ *
+ * Podaci: src/data/treneri.ts · portreti: src/data/images.ts
+ */
+import { trainers } from '../../data/treneri';
+import Media from '../Media.astro';
+import Proto from '../Proto.astro';
+
+// Pomak pri skrolu po trenerima (desktop) — levi i desni stub različite dubine
+const speeds = [0, -0.07, 0.04, -0.09];
+// Širina portreta po poziciji, za srcset
+const sizes = [
+  '(min-width: 961px) 46vw, 84vw',
+  '(min-width: 961px) 30vw, 84vw',
+  '(min-width: 961px) 30vw, 84vw',
+  '(min-width: 961px) 46vw, 84vw',
+];
+---
+
+<section class="team section" id="treneri" aria-labelledby="team-title">
+  <div class="wrap">
+    <header class="team__head grid">
+      <p class="label eyebrow team__eyebrow">Treneri</p>
+      <h2 class="display h2 team__title" id="team-title" data-split>
+        Četiri trenera. <em>Jedan</em> standard.
+      </h2>
+      <p class="team__intro muted" data-reveal>
+        Svako od njih ima svoj pristup i svoju energiju. Zajedničko im je isto: pažnja na tehniku,
+        jasan plan i trening koji ima smisla.
+      </p>
+    </header>
+
+    <ol class="team__grid">
+      {
+        trainers.map((t, i) => (
+          <li class={`tr tr--${i + 1}`} data-speed={speeds[i]}>
+            <article class="tr__card" aria-labelledby={`tr-${t.no}`}>
+              <div class="tr__visual">
+                <span class="tr__no" aria-hidden="true" data-stretch-in>
+                  {t.no}
+                </span>
+                <figure class="tr__photo media" data-img>
+                  <Media image={t.image} ratio={4 / 5} widths={[400, 640, 900, 1200]} sizes={sizes[i]} />
+                </figure>
+                <span class="tr__no tr__no--outline" aria-hidden="true" data-stretch-in>
+                  {t.no}
+                </span>
+              </div>
+
+              <div class="tr__meta" data-reveal>
+                <p class="tr__role label">{t.role}</p>
+                <h3 class="tr__name" id={`tr-${t.no}`}>
+                  {t.name}
+                  <Proto />
+                </h3>
+                <p class="tr__bio muted">{t.bio}</p>
+                {t.focus.length > 0 && (
+                  <ul class="tr__focus">
+                    {t.focus.map((f) => (
+                      <li class="label">{f}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .team__head {
+    row-gap: var(--s-6);
+    margin-bottom: var(--head-gap);
+  }
+
+  .team__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .team__title {
+    grid-column: 1 / 8;
+  }
+
+  .team__intro {
+    grid-column: 9 / -1;
+    align-self: end;
+    max-width: 36ch;
+  }
+
+  /* --- Raspored: cik-cak, dve širine --- */
+  .team__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: clamp(4rem, 9vw, 8rem);
+    align-items: start;
+  }
+
+  .tr--1 {
+    grid-column: 1 / 7;
+  }
+
+  .tr--2 {
+    grid-column: 9 / -1;
+    margin-top: clamp(8rem, 20vw, 20rem);
+  }
+
+  .tr--3 {
+    grid-column: 2 / 6;
+  }
+
+  .tr--4 {
+    grid-column: 7 / -1;
+    margin-top: clamp(6rem, 14vw, 14rem);
+  }
+
+  /* --- Portret i broj ---
+     Tri sloja u istoj ćeliji: pun broj, fotografija, kontura broja.
+     Broj visi preko donje ivice portreta. */
+  .tr__visual {
+    position: relative;
+    display: grid;
+    container-type: inline-size;
+  }
+
+  .tr__visual > * {
+    grid-area: 1 / 1;
+  }
+
+  .tr__photo {
+    aspect-ratio: var(--r-portrait);
+    z-index: 1;
+  }
+
+  .tr__no {
+    align-self: end;
+    justify-self: start;
+    transform: translate(-0.04em, 0.42em);
+    font-family: var(--font-display);
+    font-stretch: 150%;
+    font-weight: 900;
+    font-size: 30cqi;
+    line-height: 0.74;
+    letter-spacing: -0.03em;
+    color: var(--chalk);
+    position: relative;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .tr__no--outline {
+    z-index: 2;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.35cqi) var(--chalk);
+    transition: -webkit-text-stroke-color var(--dur) var(--ease);
+  }
+
+  /* --- Tekst ---
+     Kartica je kontejner iste širine kao portret, pa 30cqi ovde
+     znači isto što i veličina broja — razmak prati visinu broja. */
+  .tr__card {
+    container-type: inline-size;
+  }
+
+  .tr__meta {
+    display: grid;
+    gap: var(--s-3);
+    padding-top: calc(30cqi * 0.74 * 0.42 + var(--s-5));
+    max-width: 40ch;
+  }
+
+  .tr__role {
+    transition: color var(--dur) var(--ease);
+  }
+
+  .tr__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    font-family: var(--font-display);
+    font-stretch: var(--w-mid);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+    transition: font-stretch var(--dur-slow) var(--ease);
+  }
+
+  .tr__focus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-4);
+    padding-top: var(--s-2);
+  }
+
+  .tr__photo :global(img) {
+    transition:
+      scale 0.9s var(--ease),
+      filter var(--dur) var(--ease);
+  }
+
+  /* --- Hover: jedan trener u fokusu, ostali utišani ---
+     Ljubičasta ovde znači „aktivno" — kao aktivan red u indeksu. */
+  @media (hover: hover) and (min-width: 961px) {
+    .team__grid:has(.tr:hover) .tr:not(:hover) .tr__photo :global(img) {
+      filter: grayscale(1) contrast(1.14) brightness(calc(0.42 * var(--tone, 1)));
+    }
+
+    .tr:hover .tr__photo :global(img) {
+      scale: 1.04;
+    }
+
+    .tr:hover .tr__role {
+      color: var(--volt-text);
+    }
+
+    .tr:hover .tr__no--outline {
+      -webkit-text-stroke-color: var(--volt-text);
+    }
+
+    .tr:hover .tr__name {
+      font-stretch: 100%;
+    }
+  }
+
+  /* --- Tablet: dva stuba, desni spušten --- */
+  @media (max-width: 960px) {
+    .team__title,
+    .team__intro {
+      grid-column: 1 / -1;
+    }
+
+    .tr--1,
+    .tr--3 {
+      grid-column: 1 / 7;
+    }
+
+    .tr--2,
+    .tr--4 {
+      grid-column: 7 / -1;
+      margin-top: clamp(4rem, 16vw, 9rem);
+    }
+  }
+
+  /* --- Mobilni: jedan stub, portreti naizmenično uz levu i desnu ivicu --- */
+  @media (max-width: 560px) {
+    .team__grid {
+      row-gap: var(--s-8);
+    }
+
+    /* Pomak od dve kolone — cik-cak se jasno čita i na uskom ekranu */
+    .tr--1,
+    .tr--3 {
+      grid-column: 1 / 11;
+    }
+
+    .tr--2,
+    .tr--4 {
+      grid-column: 3 / -1;
+      margin-top: 0;
+    }
+  }
+</style>

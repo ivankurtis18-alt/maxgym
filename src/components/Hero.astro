@@ -1,0 +1,198 @@
+---
+/**
+ * Hero kao otvaranje kampanje.
+ * Ogroman razvučen MAX leži iza fotografije; preko fotografije se
+ * nastavlja kao kontura (drugi, identičan sloj teksta). Pri učitavanju
+ * se reč razvuče iz stisnute u punu širinu. Ceo ulazak i odgovor na
+ * skrol su u src/scripts/motion.ts (heroIntro, heroScroll).
+ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import Media from './Media.astro';
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title" data-hero-root>
+  <div class="hero__stage wrap">
+    <p class="hero__loc label" data-hero="loc">
+      {site.address.district} · {site.address.street}
+    </p>
+
+    <span class="hero__max" aria-hidden="true" data-hero="max">Max</span>
+
+    <figure class="hero__photo media" data-hero="photo">
+      <Media
+        image="heroLift"
+        eager
+        ratio={2 / 3}
+        art={[{ media: '(max-width: 960px)', ratio: 4 / 5, sizes: '(min-width: 561px) 58vw, 78vw' }]}
+        widths={[480, 720, 960, 1280]}
+        sizes="36vw"
+      />
+    </figure>
+
+    <span class="hero__max hero__max--outline" aria-hidden="true" data-hero="max">Max</span>
+
+    <div class="hero__copy" data-hero-copy>
+      <h1 class="hero__title display h1" id="hero-title" data-hero="title">
+        <span class="sr-only">{site.name} — </span>
+        Pomeri svoj <em>maks.</em>
+      </h1>
+      <p class="hero__text lede muted" data-hero="text">
+        Teretana u Borči za ljude koji treniraju sa namerom. Slobodni tegovi, sprave i kardio,
+        pomoć trenera kad ti zatreba i atmosfera u kojoj se radi.
+      </p>
+      <div class="hero__actions" data-hero="actions">
+        <a class="btn" href="#prvi-dolazak">
+          <span>Zakaži prvi dolazak</span>
+          <Icon name="arrow" />
+        </a>
+        <a class="btn btn--ghost" href={site.phone.href}>
+          <span>{site.phone.display}</span>
+          <Icon name="phone" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    container-type: inline-size;
+    padding-top: calc(var(--header-h) + clamp(1.5rem, 4vw, 3rem));
+    padding-bottom: clamp(3rem, 5vw, 4rem);
+    overflow: clip;
+  }
+
+  /* Širina reči MAX u em jedinicama (Anybody, wdth 150, wght 900).
+     Veličina slova se računa tako da reč tačno ispuni kolonu stranice. */
+  .hero__stage {
+    --max-em: 3.62;
+    --max-size: calc((min(100cqi, var(--page)) - 2 * var(--gutter)) / var(--max-em));
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto auto 1fr;
+    column-gap: var(--gap);
+  }
+
+  .hero__loc {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: clamp(1rem, 2.5vw, 2rem);
+    position: relative;
+    z-index: 3;
+  }
+
+  .hero__max {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-self: start;
+    font-family: var(--font-display);
+    font-stretch: 150%;
+    font-weight: 900;
+    font-size: var(--max-size);
+    line-height: 0.74;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--chalk);
+    position: relative;
+    z-index: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Drugi sloj: samo kontura, iznad fotografije. Van fotografije
+     se poklapa sa punim slovima, pa se vidi samo preko slike. */
+  .hero__max--outline {
+    z-index: 3;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.12vw) var(--chalk);
+  }
+
+  .hero__photo {
+    grid-column: 8 / 12;
+    grid-row: 1 / 4;
+    z-index: 2;
+    aspect-ratio: var(--r-poster);
+    align-self: start;
+    max-height: calc(100svh - var(--header-h) - 3rem);
+    width: 100%;
+    justify-self: end;
+  }
+
+  .hero__copy {
+    grid-column: 1 / 7;
+    grid-row: 3;
+    align-self: end;
+    display: grid;
+    gap: var(--s-5);
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    position: relative;
+    z-index: 3;
+  }
+
+  .hero__text {
+    max-width: 36ch;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    padding-top: var(--s-2);
+  }
+
+  /* Tablet i mobilni: reč preko cele širine, fotografija ulazi u
+     donju polovinu slova, tekst ispod. */
+  @media (max-width: 960px) {
+    .hero__stage {
+      grid-template-rows: auto auto auto auto;
+    }
+
+    .hero__photo {
+      grid-column: 6 / -1;
+      grid-row: 2 / 4;
+      margin-top: calc(var(--max-size) * 0.42);
+      max-height: none;
+      aspect-ratio: var(--r-portrait);
+    }
+
+    .hero__copy {
+      grid-column: 1 / -1;
+      grid-row: 4;
+    }
+  }
+
+  /* Telefon: naslov u dva jaka reda, sa razvučenom rečju, zalazi
+     preko tamnog dna fotografije — isti postupak slojeva kao MAX
+     preko njenog vrha. Tako i prvo dugme ostaje u prvom kadru. */
+  @media (max-width: 560px) {
+    .hero__photo {
+      grid-column: 3 / -1;
+    }
+
+    .hero__copy {
+      margin-top: -2.75rem;
+      padding-top: 0;
+      gap: var(--s-4);
+    }
+
+    .hero__title {
+      font-size: clamp(3.25rem, 15vw, 4.25rem);
+    }
+
+    .hero__title em {
+      font-stretch: 150%;
+    }
+
+    .hero__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* Slika ima rezervu za paralaksu pri skrolu */
+  .hero__photo :global(img) {
+    will-change: transform;
+  }
+</style>

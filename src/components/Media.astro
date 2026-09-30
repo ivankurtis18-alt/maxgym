@@ -1,0 +1,102 @@
+---
+/**
+ * Responzivna slika iz registra (src/data/images.ts).
+ * - Udaljena (Unsplash, privremeno): server iseče tačnu razmeru okvira
+ *   oko tačke fokusa, pa se slika nikad ne razvlači da bi popunila
+ *   okvir. `art` daje drugu razmeru za drugi raspored (<picture>).
+ * - Lokalna (import ImageMetadata): optimizuje astro:assets; okvir
+ *   popunjava object-fit, a fokus iz registra drži kadar.
+ */
+import { Image } from 'astro:assets';
+import { images, type ImageKey, type SiteImage } from '../data/images';
+
+interface Art {
+  /** Media upit, npr. '(max-width: 960px)'. Prvi koji važi pobeđuje. */
+  media: string;
+  /** Razmera okvira u tom rasporedu (širina / visina) */
+  ratio: number;
+  sizes?: string;
+}
+
+interface Props {
+  image: ImageKey;
+  sizes?: string;
+  widths?: number[];
+  eager?: boolean;
+  class?: string;
+  alt?: string;
+  /** Razmera okvira u osnovnom (desktop) rasporedu — širina / visina */
+  ratio?: number;
+  /** Druge razmere okvira po rasporedu, od najužeg ka širem */
+  art?: Art[];
+}
+
+const {
+  image,
+  sizes = '100vw',
+  widths = [480, 800, 1200, 1600, 2200],
+  eager = false,
+  class: className,
+  alt,
+  ratio = 3 / 2,
+  art = [],
+} = Astro.props;
+
+const entry: SiteImage = images[image];
+const altText = alt ?? entry.alt;
+const largest = widths[widths.length - 1];
+const loading = eager ? 'eager' : 'lazy';
+const fetchpriority = eager ? 'high' : 'auto';
+
+const remote = typeof entry.src === 'string';
+// Izrez: 'faces'/'entropy' prepušta izbor serveru, fokus ga zadaje ručno
+const cropParams = entry.crop
+  ? `&crop=${entry.crop}`
+  : entry.focus
+    ? `&crop=focalpoint&fp-x=${entry.focus[0]}&fp-y=${entry.focus[1]}`
+    : '';
+const url = (w: number, r: number) =>
+  `${entry.src}?auto=format&fit=crop${cropParams}&w=${w}&h=${Math.round(w / r)}&q=70`;
+const srcset = (r: number) => widths.map((w) => `${url(w, r)} ${w}w`).join(', ');
+
+const style = [
+  entry.tone ? `--tone:${entry.tone}` : '',
+  entry.focus ? `object-position:${entry.focus[0] * 100}% ${entry.focus[1] * 100}%` : '',
+]
+  .filter(Boolean)
+  .join(';') || undefined;
+---
+
+{
+  remote ? (
+    <picture>
+      {art.map((a) => (
+        <source media={a.media} srcset={srcset(a.ratio)} sizes={a.sizes ?? sizes} />
+      ))}
+      <img
+        class={className}
+        src={url(widths[Math.min(2, widths.length - 1)], ratio)}
+        srcset={srcset(ratio)}
+        sizes={sizes}
+        width={largest}
+        height={Math.round(largest / ratio)}
+        alt={altText}
+        loading={loading}
+        decoding="async"
+        fetchpriority={fetchpriority}
+        style={style}
+      />
+    </picture>
+  ) : (
+    <Image
+      class={className}
+      src={entry.src as ImageMetadata}
+      widths={widths}
+      sizes={sizes}
+      alt={altText}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      style={style}
+    />
+  )
+}

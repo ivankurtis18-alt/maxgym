@@ -1,0 +1,82 @@
+---
+/**
+ * Povratak na vrh — pojavljuje se kada hero izađe iz kadra (main.ts).
+ * Isti jezik kao dugmad: pravougaono, linija 1px, na hover se odozdo
+ * podigne kredasta „ploča".
+ */
+import Icon from './Icon.astro';
+---
+
+<a class="totop" href="#top" aria-label="Na vrh stranice" data-totop>
+  <Icon name="arrow-up" />
+</a>
+
+<style>
+  .totop {
+    position: fixed;
+    right: var(--gutter);
+    bottom: var(--s-5);
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--chalk);
+    border: 1px solid var(--line-strong);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(0.75rem);
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      visibility 0s linear var(--dur),
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+
+  .totop.is-visible {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+
+  .totop::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--chalk);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .totop :global(svg) {
+    width: 1.125rem;
+    height: 1.125rem;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .totop:hover {
+      color: var(--ink);
+      border-color: var(--chalk);
+    }
+
+    .totop:hover::before {
+      transform: scaleY(1);
+    }
+
+    .totop:hover :global(svg) {
+      transform: translateY(-2px);
+    }
+  }
+</style>

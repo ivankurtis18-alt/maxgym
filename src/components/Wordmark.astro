@@ -1,0 +1,44 @@
+---
+/** Tipografski znak: MAX razvučen do kraja, uz stisnut potpis. */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={['wm', className]}>
+  <span class="wm__max">Max</span>
+  <span class="wm__sub">Gym &amp;<br />Fitness</span>
+</span>
+
+<style>
+  .wm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    line-height: 1;
+  }
+
+  .wm__max {
+    font-family: var(--font-display);
+    font-stretch: 150%;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .wm__sub {
+    padding-left: 0.55rem;
+    border-left: 2px solid var(--volt);
+    font-family: var(--font-body);
+    font-stretch: var(--w-cond);
+    font-weight: 600;
+    font-size: 0.625rem;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    line-height: 1.15;
+    color: var(--chalk-2);
+  }
+</style>

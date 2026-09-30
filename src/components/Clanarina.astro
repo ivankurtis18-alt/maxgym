@@ -1,0 +1,275 @@
+---
+/**
+ * Članarina — jedina sekcija u kojoj ljubičasta pokriva celu površinu.
+ * Cenovnik i radno vreme dolaze iz src/data/site.ts.
+ */
+import { dinars, pricing, site } from '../data/site';
+import Icon from './Icon.astro';
+import { put } from '../lib/putanja';
+---
+
+<section class="clan section" id="clanarina" aria-labelledby="clan-title" data-field>
+  <div class="wrap grid">
+    <p class="label eyebrow clan__eyebrow">Članarina</p>
+    <div class="clan__head">
+      <h2 class="display h2 clan__title" id="clan-title" data-split>
+        Izaberi kako <em>treniraš</em>
+      </h2>
+      <p class="clan__intro" data-reveal>
+        Paket po tvom ritmu — bez sitnih slova. Porodični popust važi za sve pakete.
+      </p>
+
+      <dl class="clan__hours" data-reveal>
+        <dt class="label">Radno vreme</dt>
+        {
+          site.hours.map((h) => (
+            <dd class="clan__hour">
+              <span>{h.days}</span>
+              <span>{h.time}</span>
+            </dd>
+          ))
+        }
+        <dd class="clan__last">{site.lastEntry}</dd>
+      </dl>
+    </div>
+
+    <div class="clan__side">
+      <ul class="clan__plans">
+        {
+          pricing.packages.map((plan) => (
+            <li class="plan" data-reveal>
+              <h3 class="h3 plan__name">{plan.name}</h3>
+              <p class="plan__price">
+                <span class="plan__amount">{dinars(plan.price)}</span>
+                <span class="plan__cur label">din</span>
+              </p>
+              <p class="plan__text">{plan.note}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="clan__family" data-reveal>
+        <span class="label">Porodični popust</span>
+        <span class="clan__family-value">
+          −{dinars(pricing.familyDiscount)} din <span class="clan__family-note">na svaki paket</span>
+        </span>
+      </p>
+
+      <p class="clan__pt" data-reveal>
+        Personalni trening — cena na upit.
+        <a class="link" href={put('/personalni-trening')}>Više o personalnom treningu</a>
+      </p>
+
+      <div class="clan__cta" data-reveal>
+        <a class="btn btn--dark" href={site.phone.href}>
+          <span>Pozovi · {site.phone.display}</span>
+          <Icon name="phone" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clan {
+    position: relative;
+    /* Puna, ravna ljubičasta — samopouzdanje bez efekata */
+    background: var(--volt);
+    color: var(--on-volt);
+    overflow: clip;
+  }
+
+  .clan .grid {
+    row-gap: var(--head-gap);
+  }
+
+  .clan__eyebrow {
+    grid-column: 1 / -1;
+    --eyebrow-line: var(--on-volt-line);
+    --eyebrow-color: var(--on-volt);
+  }
+
+  .clan__head {
+    grid-column: 1 / 6;
+    display: grid;
+    align-content: start;
+    gap: var(--s-6);
+  }
+
+  .clan__intro {
+    max-width: 32ch;
+    color: var(--on-volt-2);
+  }
+
+  /* Radno vreme: mala tabela na dnu leve kolone */
+  .clan__hours {
+    display: grid;
+    margin-top: var(--s-5);
+    border-top: 1px solid var(--on-volt-line);
+  }
+
+  .clan__hours dt {
+    padding-block: var(--s-4) var(--s-2);
+    color: var(--on-volt);
+  }
+
+  .clan__hour {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: var(--s-2);
+    border-bottom: 1px solid var(--on-volt-line);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .clan__last {
+    padding-top: var(--s-3);
+    font-size: var(--t-small);
+    color: var(--on-volt-2);
+  }
+
+  .clan__side {
+    grid-column: 7 / -1;
+    display: grid;
+    align-content: start;
+    gap: var(--s-6);
+  }
+
+  .clan__plans {
+    border-top: 1px solid var(--on-volt-line);
+  }
+
+  .plan {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-2) var(--s-6);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--on-volt-line);
+  }
+
+  .plan__name {
+    font-size: clamp(1.5rem, 1.15rem + 1.2vw, 2.25rem);
+    transition: font-stretch var(--dur-slow) var(--ease);
+  }
+
+  .plan__price {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    white-space: nowrap;
+  }
+
+  .plan__amount {
+    font-family: var(--font-display);
+    font-stretch: var(--w-mid);
+    font-weight: 800;
+    font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plan__cur {
+    color: var(--on-volt);
+  }
+
+  .plan__text {
+    grid-column: 1;
+    max-width: 40ch;
+    color: var(--on-volt-2);
+  }
+
+  @media (hover: hover) {
+    .plan:hover .plan__name {
+      font-stretch: 100%;
+    }
+  }
+
+  /* Porodični popust važi za sve — jedna tamna traka ispod spiska */
+  .clan__family {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+    padding: var(--s-4) var(--s-5);
+    background: var(--ink);
+    color: var(--chalk);
+  }
+
+  .clan__family .label {
+    color: var(--chalk-2);
+  }
+
+  .clan__family-value {
+    font-family: var(--font-display);
+    font-stretch: var(--w-mid);
+    font-weight: 700;
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .clan__family-note {
+    font-family: var(--font-body);
+    font-stretch: var(--w-cond);
+    font-size: var(--t-label);
+    font-weight: 600;
+    letter-spacing: var(--track-label);
+    color: var(--chalk-2);
+  }
+
+  .clan__pt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-4);
+    color: var(--on-volt-2);
+  }
+
+  .clan__pt .link {
+    color: var(--on-volt);
+  }
+
+  /* Manji ekrani: naslov → cene → radno vreme */
+  @media (max-width: 960px) {
+    .clan .grid {
+      row-gap: var(--s-6);
+    }
+
+    .clan__head {
+      display: contents;
+    }
+
+    .clan__title,
+    .clan__intro,
+    .clan__side,
+    .clan__hours {
+      grid-column: 1 / -1;
+    }
+
+    .clan__side {
+      order: 1;
+    }
+
+    .clan__hours {
+      order: 2;
+      margin-top: var(--s-4);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .plan__amount {
+      font-size: 2rem;
+    }
+
+    .clan__cta .btn {
+      width: 100%;
+      white-space: normal;
+      padding-block: var(--s-3);
+    }
+  }
+</style>

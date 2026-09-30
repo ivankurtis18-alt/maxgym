@@ -1,0 +1,190 @@
+---
+/**
+ * Pristup + šta personalni trening donosi.
+ * Izjava (isti pull-quote tretman kao Sala na početnoj), zatim
+ * fotografija koja ostaje u kadru dok se čita spisak.
+ */
+import Media from '../Media.astro';
+
+const offer = [
+  {
+    tag: 'Plan',
+    title: 'Napravljeno za tebe',
+    text: 'Trening se gradi oko tvog cilja, iskustva i rasporeda — ne oko šablona koji važi za sve.',
+  },
+  {
+    tag: 'Tehnika',
+    title: 'Pokret pre kilaže',
+    text: 'Trener prati kako se krećeš i ispravlja na vreme, da svaka vežba radi ono zbog čega je u planu.',
+  },
+  {
+    tag: 'Struktura',
+    title: 'Svaki trening ima red',
+    text: 'Zagrevanje, glavni deo i završetak imaju svoje mesto. Uvek znaš šta radiš i zašto.',
+  },
+  {
+    tag: 'Napredak',
+    title: 'Napredak koji se prati',
+    text: 'Opterećenja, ponavljanja i utisci se beleže, pa se plan menja kako ti napreduješ.',
+  },
+  {
+    tag: 'Podrška',
+    title: 'Neko računa na tebe',
+    text: 'Dogovoren termin i trener koji te čeka su najbolja zaštita od preskakanja treninga.',
+  },
+];
+---
+
+<section class="pri section" id="pristup" aria-labelledby="pri-title">
+  <div class="wrap grid">
+    <h2 class="pri__eyebrow label eyebrow" id="pri-title">Pristup</h2>
+
+    <p class="pri__statement" data-split="text">
+      <strong>Personalni trening nije strožija verzija treninga — nego pametnija.</strong>
+      Trener prati svaki pokret, prilagođava opterećenje i vodi računa da svaki dolazak ima svrhu.
+      <strong>Ti se fokusiraš na rad. Plan je briga trenera.</strong>
+    </p>
+
+    <figure class="pri__photo media" data-img="parallax">
+      <Media
+        image="ptPlan"
+        ratio={4 / 5}
+        art={[{ media: '(min-width: 561px) and (max-width: 960px)', ratio: 3 / 2 }]}
+        widths={[480, 720, 1000, 1300]}
+        sizes="(min-width: 961px) 38vw, 100vw"
+      />
+    </figure>
+
+    <div class="pri__offer">
+      <p class="pri__sub label">Šta dobijaš</p>
+      <ul class="offer">
+        {
+          offer.map((item) => (
+            <li class="offer__row" data-reveal>
+              <h3 class="h3 offer__title">{item.title}</h3>
+              <p class="offer__tag label">{item.tag}</p>
+              <p class="offer__text muted">{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="link pri__more" href="#proces">Kako izgleda saradnja</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pri .grid {
+    row-gap: var(--head-gap);
+  }
+
+  .pri__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .pri__statement {
+    grid-column: 1 / 11;
+    margin-top: calc(var(--s-6) - var(--head-gap));
+    font-size: var(--t-statement);
+    font-weight: 500;
+    line-height: 1.16;
+    letter-spacing: -0.015em;
+    color: var(--chalk-3);
+  }
+
+  .pri__statement strong {
+    font-weight: 500;
+    color: var(--chalk);
+  }
+
+  /* Fotografija ostaje u kadru dok se čita spisak */
+  .pri__photo {
+    grid-column: 1 / 6;
+    grid-row: 3;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--header-h) + var(--s-5));
+    aspect-ratio: var(--r-portrait);
+  }
+
+  .pri__offer {
+    grid-column: 7 / -1;
+    grid-row: 3;
+    display: grid;
+    align-content: start;
+    gap: var(--s-5);
+  }
+
+  .offer {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .offer__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-3) var(--s-6);
+    padding-block: var(--s-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .offer__title {
+    transition: font-stretch var(--dur-slow) var(--ease);
+  }
+
+  .offer__tag {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .offer__text {
+    grid-column: 1;
+    max-width: 46ch;
+  }
+
+  @media (hover: hover) {
+    .offer__row:hover .offer__title {
+      font-stretch: 100%;
+    }
+  }
+
+  .pri__more {
+    justify-self: start;
+    margin-top: var(--s-4);
+  }
+
+  @media (max-width: 960px) {
+    .pri__statement,
+    .pri__photo,
+    .pri__offer {
+      grid-column: 1 / -1;
+    }
+
+    .pri__photo {
+      grid-row: auto;
+      position: relative;
+      top: auto;
+      aspect-ratio: var(--r-land);
+    }
+
+    .pri__offer {
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .pri__photo {
+      aspect-ratio: var(--r-portrait);
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .offer__row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .offer__tag {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+</style>

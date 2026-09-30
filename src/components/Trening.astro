@@ -1,0 +1,395 @@
+---
+/**
+ * Indeks treninga. Na desktopu fotografija stoji u lepljivoj koloni
+ * desno i prati spisak; menja je red koji prolazi sredinom ekrana,
+ * hover ili fokus (main.ts), a aktivni naziv se razvuče. Na tabletu
+ * svaki red nosi svoju fotografiju; na telefonu redovi postaju karte
+ * koje se prevlače, sa šipkom napretka ispod (umesto pet fotografija
+ * preko cele širine jedna ispod druge).
+ */
+import type { ImageKey } from '../data/images';
+import Media from './Media.astro';
+import { put } from '../lib/putanja';
+
+const items: {
+  key: string;
+  tag: string;
+  name: string;
+  text: string;
+  image: ImageKey;
+  more?: { href: string; label: string };
+}[] = [
+  {
+    key: 'tegovi',
+    tag: 'Snaga',
+    name: 'Slobodni tegovi',
+    text: 'Šipke, bučice i ploče za osnovne pokrete koji grade snagu — čučanj, mrtvo dizanje, potisak.',
+    image: 'freeWeights',
+  },
+  {
+    key: 'sprave',
+    tag: 'Kontrola',
+    name: 'Sprave',
+    text: 'Izolovan i kontrolisan rad na svakoj mišićnoj grupi, za početnike i za one koji tačno znaju šta traže.',
+    image: 'machines',
+  },
+  {
+    key: 'kardio',
+    tag: 'Kondicija',
+    name: 'Kardio zona',
+    text: 'Zagrevanje, izdržljivost i dani kada je cilj puls, a ne kilaža.',
+    image: 'cardio',
+  },
+  {
+    key: 'funkcionalni',
+    tag: 'Pokret',
+    name: 'Funkcionalni trening',
+    text: 'Trening celog tela kroz pokrete koji ti trebaju i van sale — snaga, stabilnost i koordinacija.',
+    image: 'functional',
+  },
+  {
+    key: 'personalni',
+    tag: 'Vođenje',
+    name: 'Personalni trening',
+    text: 'Plan, tehnika i praćenje napretka uz trenera, prilagođeno tvom nivou i cilju.',
+    image: 'personal',
+    more: { href: '/personalni-trening', label: 'Upoznaj trenere' },
+  },
+];
+---
+
+<section class="trening section" id="trening" aria-labelledby="trening-title">
+  <div class="wrap">
+    <header class="trening__head grid">
+      <p class="label eyebrow trening__eyebrow">Trening</p>
+      <h2 class="display h2 trening__title" id="trening-title" data-split>
+        Opremljeno za <em>svaki</em> cilj
+      </h2>
+      <p class="trening__intro muted" data-reveal>
+        Snaga, kondicija ili potpuno nov početak. Sala je podeljena tako da svako ima prostor za
+        svoj trening.
+      </p>
+    </header>
+
+    <div class="idx" data-index>
+      <ul class="idx__list">
+        {
+          items.map((item, i) => (
+            <li class:list={["idx__row", { "is-active": i === 0 }]} data-index-row data-reveal="fade" tabindex="0">
+              <p class="idx__tag label">{item.tag}</p>
+              <h3 class="idx__name">{item.name}</h3>
+              <p class="idx__text">{item.text}</p>
+              {item.more && (
+                <a class="idx__more link" href={put(item.more.href)}>
+                  {item.more.label}
+                </a>
+              )}
+              <figure class="idx__media media">
+                <Media
+                  image={item.image}
+                  ratio={3 / 2}
+                  art={[{ media: '(max-width: 560px)', ratio: 4 / 5, sizes: '80vw' }]}
+                  widths={[480, 720, 1000]}
+                  sizes="38vw"
+                />
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="idx__progress" aria-hidden="true" data-index-progress>
+        <span class="idx__count label"><span data-index-count>01</span> / {String(items.length).padStart(2, '0')}</span>
+        <span class="idx__track"><span class="idx__fill"></span></span>
+      </div>
+
+      <div class="idx__stage" aria-hidden="true">
+        {
+          items.map((item, i) => (
+            <figure class:list={['idx__shot media', { 'is-active': i === 0 }]} data-index-shot>
+              <Media image={item.image} alt="" ratio={4 / 5} widths={[480, 720, 1000]} sizes="38vw" />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .trening__head {
+    row-gap: var(--s-6);
+    margin-bottom: var(--head-gap);
+  }
+
+  .trening__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .trening__title {
+    grid-column: 1 / 9;
+  }
+
+  .trening__intro {
+    grid-column: 9 / -1;
+    align-self: end;
+    max-width: 34ch;
+    color: var(--chalk-2);
+  }
+
+  /* --- Indeks --- */
+  .idx {
+    position: relative;
+  }
+
+  .idx__list {
+    border-top: 1px solid var(--line);
+  }
+
+  .idx__row {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    column-gap: var(--gap);
+    row-gap: var(--s-2);
+    padding-block: clamp(1.25rem, 2.2vw, 2rem);
+    border-bottom: 1px solid var(--line);
+    cursor: default;
+  }
+
+  .idx__tag {
+    grid-row: 1 / 3;
+    padding-top: 0.9em;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .idx__name {
+    font-family: var(--font-display);
+    font-stretch: var(--w-tight);
+    font-weight: 800;
+    font-size: clamp(2.25rem, 1.4rem + 3vw, 4.25rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--chalk-3);
+    transition:
+      font-stretch var(--dur-slow) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .idx__text {
+    max-width: 46ch;
+    color: var(--chalk-3);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .idx__row.is-active .idx__text {
+    color: var(--chalk-2);
+  }
+
+  .idx__more {
+    justify-self: start;
+    margin-top: var(--s-2);
+    font-size: var(--t-small);
+  }
+
+  @media (min-width: 961px) {
+    .idx__more {
+      grid-column: 2;
+    }
+  }
+
+  .idx__row.is-active .idx__name {
+    color: var(--chalk);
+    font-stretch: var(--w-mid);
+  }
+
+  .idx__row.is-active .idx__tag {
+    color: var(--volt-text);
+  }
+
+  /* Desktop: fotografije su naslagane u lepljivoj koloni desno,
+     pa kolona nije prazna dok se spisak čita. Fotografije u redovima
+     se ne prikazuju (i ne učitavaju). */
+  .idx__stage {
+    display: none;
+  }
+
+  @media (min-width: 961px) {
+    /* Veličina je vezana za širinu kolone tako da i najduži naziv
+       u aktivnoj širini (--w-mid) stane u red — aktivacija pri skrolu
+       ne sme da pomera raspored. */
+    .idx__name {
+      font-size: clamp(2.25rem, -0.6rem + 4.6vw, 4.25rem);
+    }
+
+    .idx {
+      display: grid;
+      grid-template-columns: 60% minmax(0, 1fr);
+      column-gap: calc(var(--gap) * 2);
+      align-items: start;
+    }
+
+    .idx__row .idx__media {
+      display: none;
+    }
+
+    .idx__stage {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-5));
+      display: grid;
+      aspect-ratio: var(--r-portrait);
+      max-height: calc(100svh - var(--header-h) - var(--s-7));
+    }
+
+    /* Aktivna fotografija se podiže odozdo preko prethodne,
+       koja ostaje ispod dok prelaz ne završi (.was-active). */
+    .idx__shot {
+      grid-area: 1 / 1;
+      z-index: 0;
+      clip-path: inset(100% 0 0 0);
+      transition: clip-path var(--dur-slow) var(--ease);
+    }
+
+    .idx__shot :global(img) {
+      scale: 1.12;
+      transition: scale 1.2s var(--ease);
+    }
+
+    .idx__shot.was-active {
+      z-index: 1;
+      clip-path: inset(0);
+      transition: none;
+    }
+
+    .idx__shot.is-active {
+      z-index: 2;
+      clip-path: inset(0);
+    }
+
+    .idx__shot.is-active :global(img) {
+      scale: 1;
+    }
+  }
+
+  /* Tablet: fotografija levo od teksta */
+  @media (min-width: 561px) and (max-width: 960px) {
+    .idx__row {
+      grid-template-columns: 38% minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .idx__row > :not(.idx__media) {
+      grid-column: 2;
+    }
+
+    .idx__media {
+      grid-column: 1;
+      grid-row: 1 / span 3;
+      margin-bottom: 0;
+    }
+  }
+
+  .idx__progress {
+    display: none;
+  }
+
+  /* Telefon: karte koje se prevlače. Sledeća karta viri, a šipka
+     ispod se puni kako se ide kroz spisak (main.ts → --p). */
+  @media (max-width: 560px) {
+    .idx__list {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 80%;
+      gap: var(--gap);
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+      scroll-padding-inline: var(--gutter);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      border-top: 0;
+    }
+
+    .idx__list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .idx .idx__row {
+      scroll-snap-align: start;
+      align-content: start;
+      padding-block: 0;
+      border-bottom: 0;
+    }
+
+    .idx .idx__media {
+      aspect-ratio: var(--r-portrait);
+    }
+
+    .idx__name,
+    .idx__row.is-active .idx__name {
+      font-size: clamp(1.875rem, 9vw, 2.5rem);
+    }
+
+    .idx__progress {
+      display: flex;
+      align-items: center;
+      gap: var(--s-4);
+      margin-top: var(--s-6);
+    }
+
+    .idx__count {
+      display: block;
+      font-variant-numeric: tabular-nums;
+      color: var(--chalk-2);
+    }
+
+    .idx__track {
+      position: relative;
+      flex: 1;
+      height: 2px;
+      background: var(--line-strong);
+    }
+
+    .idx__fill {
+      position: absolute;
+      inset: 0;
+      background: var(--chalk);
+      transform: scaleX(var(--p, 0.2));
+      transform-origin: left;
+    }
+  }
+
+  /* Tablet i mobilni: svaki red sa svojom fotografijom */
+  @media (max-width: 960px) {
+    .trening__title,
+    .trening__intro {
+      grid-column: 1 / -1;
+    }
+
+    .idx__row {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: var(--s-6);
+    }
+
+    .idx__tag {
+      grid-row: auto;
+      padding-top: 0;
+    }
+
+    .idx__row.is-active .idx__tag {
+      color: var(--chalk-3);
+    }
+
+    .idx__name,
+    .idx__row.is-active .idx__name {
+      color: var(--chalk);
+      font-stretch: var(--w-tight);
+    }
+
+    .idx__media {
+      order: -1;
+      aspect-ratio: var(--r-land);
+      margin-bottom: var(--s-4);
+    }
+  }
+</style>

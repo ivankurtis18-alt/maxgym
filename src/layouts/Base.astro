@@ -1,0 +1,91 @@
+---
+import '@fontsource-variable/anybody/standard.css';
+import '@fontsource-variable/instrument-sans/standard.css';
+import '../styles/global.css';
+import { site } from '../data/site';
+import ToTop from '../components/ToTop.astro';
+import { put } from '../lib/putanja';
+// Displej pismo nosi hero — učitava se odmah, pre CSS-a.
+import displayFont from '@fontsource-variable/anybody/files/anybody-latin-standard-normal.woff2?url';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = `${site.name} — teretana u Borči, Beograd`,
+  description = 'Max Gym & Fitness, Julije Delere 43, Borča. Slobodni tegovi, sprave, kardio i personalni trening za ljude koji treniraju sa namerom.',
+} = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ExerciseGym',
+  name: site.name,
+  telephone: site.phone.display,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.postalCode,
+    addressLocality: site.address.city,
+    addressCountry: 'RS',
+  },
+  openingHoursSpecification: site.hours.map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: h.spec,
+    opens: h.opens,
+    closes: h.closes,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="sr-Latn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0d0f0e" />
+    <link rel="icon" type="image/svg+xml" href={put('/favicon.svg')} />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="sr_RS" />
+    {site.prototype && <meta name="robots" content="noindex" />}
+    {/* Kanonska adresa tek kada je pravi domen upisan u astro.config.mjs (`site`) */}
+    {!site.prototype && <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />}
+    {!site.prototype && <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      (function () {
+        var html = document.documentElement;
+        html.classList.add('js');
+        // Refresh uvek vraća na početak stranice (hero), bez #sekcije u adresi
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        if (nav && nav.type === 'reload') {
+          if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+          window.scrollTo(0, 0);
+        }
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          html.classList.add('motion');
+          // Osigurač: ako motion.ts ne stigne, sadržaj se ipak prikazuje.
+          setTimeout(function () {
+            html.classList.add('motion-ready');
+          }, 3500);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Preskoči na sadržaj</a>
+    <slot />
+    <ToTop />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

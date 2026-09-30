@@ -1,0 +1,80 @@
+---
+/**
+ * Proces saradnje — traka (Band) kao prelaz, zatim četiri koraka na
+ * istoj šipci kao Prvi dolazak na početnoj (Steps).
+ */
+import { site } from '../../data/site';
+import Band from '../Band.astro';
+import Icon from '../Icon.astro';
+import Steps from '../Steps.astro';
+
+const steps = [
+  {
+    title: 'Upoznavanje',
+    text: 'Prvi susret u sali. Razgovarate o tvom iskustvu, navikama i tome šta želiš da promeniš.',
+  },
+  {
+    title: 'Procena ciljeva',
+    text: 'Zajedno postavljate realne ciljeve i sagledavate odakle krećeš — bez obećanja preko noći.',
+  },
+  {
+    title: 'Plan treninga',
+    text: 'Trener slaže plan prema tvom nivou, rasporedu i cilju, sa jasnom strukturom svakog treninga.',
+  },
+  {
+    title: 'Rad i napredak',
+    text: 'Treniraš uz trenera, napredak se beleži, a plan se menja kako ti napreduješ.',
+  },
+];
+---
+
+<section class="proc" id="proces" aria-labelledby="proc-title">
+  <Band image="ptTalk" eyebrow="Kako radimo" titleId="proc-title">
+    Svaki trening ima <em>cilj.</em>
+  </Band>
+
+  <div class="proc__body wrap section">
+    <div class="proc__head grid">
+      <p class="proc__intro lede muted" data-reveal>
+        Saradnja ima jasan tok. Od prvog razgovora do svakog sledećeg treninga znaš gde si, šta
+        radiš i kuda ideš.
+      </p>
+      <div class="proc__aside" data-reveal>
+        <a class="btn" href={site.phone.href}>
+          <span>Zakaži upoznavanje</span>
+          <Icon name="phone" />
+        </a>
+      </div>
+    </div>
+
+    <Steps steps={steps} />
+  </div>
+</section>
+
+<style>
+  .proc__body {
+    padding-top: var(--head-gap);
+  }
+
+  .proc__head {
+    row-gap: var(--s-6);
+    margin-bottom: var(--head-gap);
+  }
+
+  .proc__intro {
+    grid-column: 1 / 7;
+  }
+
+  .proc__aside {
+    grid-column: 9 / -1;
+    align-self: end;
+    justify-self: start;
+  }
+
+  @media (max-width: 960px) {
+    .proc__intro,
+    .proc__aside {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,77 @@
+---
+/**
+ * Traka: fotografija preko cele širine i veliki naslov u njenom dnu.
+ * Donja senka pretapa fotografiju u sledeći deo sekcije, pa traka
+ * radi kao prelaz, ne kao rez. Na desktopu: paralaksa fotografije i
+ * blago klizanje naslova (motion.ts → band).
+ */
+import type { ImageKey } from '../data/images';
+import Media from './Media.astro';
+
+interface Props {
+  image: ImageKey;
+  eyebrow: string;
+  titleId: string;
+}
+
+const { image, eyebrow, titleId } = Astro.props;
+---
+
+<div class="band">
+  <figure class="band__photo media" data-band>
+    <Media
+      image={image}
+      ratio={16 / 9}
+      art={[
+        { media: '(max-width: 560px)', ratio: 3 / 5 },
+        { media: '(max-width: 960px)', ratio: 5 / 4 },
+      ]}
+      sizes="100vw"
+      widths={[800, 1200, 1600, 2200, 2800]}
+    />
+  </figure>
+  <div class="band__inner wrap">
+    <p class="label eyebrow band__eyebrow">{eyebrow}</p>
+    <h2 class="display xl band__title" id={titleId} data-split data-band-title>
+      <slot />
+    </h2>
+  </div>
+</div>
+
+<style>
+  .band {
+    position: relative;
+    display: grid;
+    min-height: clamp(26rem, 78vh, 52rem);
+  }
+
+  .band__photo,
+  .band__inner {
+    grid-area: 1 / 1;
+  }
+
+  /* Senka samo zato što naslov stoji preko fotografije */
+  .band__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgb(13 15 14 / 0.6) 0%, transparent 30%),
+      linear-gradient(0deg, var(--ink) 0%, rgb(13 15 14 / 0.55) 35%, transparent 70%);
+  }
+
+  .band__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: clamp(2rem, 5vw, 4rem) 0;
+  }
+
+  .band__eyebrow {
+    --eyebrow-line: rgb(237 235 241 / 0.3);
+    --eyebrow-color: var(--chalk);
+  }
+</style>

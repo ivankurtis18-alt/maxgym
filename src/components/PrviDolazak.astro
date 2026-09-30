@@ -1,0 +1,97 @@
+---
+/**
+ * Prvi dolazak — četiri koraka na šipci (vidi Steps.astro).
+ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+import Steps from './Steps.astro';
+
+const steps = [
+  {
+    title: 'Javi se',
+    text: 'Pozovi ili svrati. Reci nam šta želiš da postigneš i kada ti odgovara da dođeš.',
+  },
+  {
+    title: 'Upoznaj salu',
+    text: 'Pokazaćemo ti prostor, opremu i kako funkcioniše svakodnevni rad u sali.',
+  },
+  {
+    title: 'Napravi plan',
+    text: 'Sam ili uz trenera — kreneš sa jasnim planom koji odgovara tvom nivou.',
+  },
+  {
+    title: 'Napreduj',
+    text: 'Vraćaš se, beležiš i pomeraš svoj maks. Ostalo je disciplina, a ona se gradi ovde.',
+  },
+];
+---
+
+<section class="prvi section" id="prvi-dolazak" aria-labelledby="prvi-title">
+  <div class="wrap">
+    <header class="prvi__head grid">
+      <p class="label eyebrow prvi__eyebrow">Prvi dolazak</p>
+      <h2 class="display h2 prvi__title" id="prvi-title" data-split>
+        Početak je <em>lak.</em>
+      </h2>
+      <div class="prvi__aside" data-reveal>
+        <p class="muted">
+          Ne moraš da znaš sve unapred. Dovoljno je da dođeš — ostatak rešavamo zajedno, korak po
+          korak.
+        </p>
+        <a class="btn" href={site.phone.href}>
+          <span>Pozovi i dogovori termin</span>
+          <Icon name="arrow" />
+        </a>
+      </div>
+    </header>
+
+    <Steps steps={steps} />
+  </div>
+</section>
+
+<style>
+  .prvi__head {
+    row-gap: var(--s-6);
+    margin-bottom: var(--head-gap);
+  }
+
+  .prvi__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .prvi__title {
+    grid-column: 1 / 8;
+  }
+
+  .prvi__aside {
+    grid-column: 9 / -1;
+    align-self: end;
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+
+  /* Mali laptop: dugme (bez preloma) ne staje u četiri kolone */
+  @media (min-width: 961px) and (max-width: 1200px) {
+    .prvi__aside {
+      grid-column: 8 / -1;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .prvi__title,
+    .prvi__aside {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Telefon: dugme preko cele kolone, kao i ostali pozivi; na
+     najužim ekranima natpis sme da pređe u drugi red */
+  @media (max-width: 560px) {
+    .prvi__aside .btn {
+      justify-self: stretch;
+      white-space: normal;
+      padding-block: var(--s-3);
+    }
+  }
+</style>

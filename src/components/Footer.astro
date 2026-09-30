@@ -1,0 +1,260 @@
+---
+/**
+ * Završni poziv i podnožje. Veliki MAX se vraća kao kontura —
+ * hero otvara punim slovima, podnožje zatvara obrisom.
+ */
+import { nav, site } from '../data/site';
+import Icon from './Icon.astro';
+import Proto from './Proto.astro';
+import Wordmark from './Wordmark.astro';
+import { put } from '../lib/putanja';
+
+interface Props {
+  /** Podstranica: logo vodi na početnu, „Kako do nas" na /#kontakt */
+  current?: string;
+  eyebrow?: string;
+  /** Kratak tekst ispod naslova završnog poziva (opciono) */
+  text?: string;
+  primaryLabel?: string;
+}
+
+const {
+  current,
+  eyebrow = 'Prvi korak',
+  text,
+  primaryLabel = `Pozovi ${site.phone.display}`,
+} = Astro.props;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="ftr">
+  <section class="ftr__cta wrap" aria-labelledby="ftr-title">
+    <p class="label eyebrow">{eyebrow}</p>
+    <h2 class="display h2 ftr__title" id="ftr-title" data-split>
+      <slot name="title">Sledeći trening može da bude <em>prvi.</em></slot>
+    </h2>
+    {text && <p class="ftr__text lede muted" data-reveal>{text}</p>}
+    <div class="ftr__actions" data-reveal>
+      <a class="btn" href={site.phone.href}>
+        <span>{primaryLabel}</span>
+        <Icon name="phone" />
+      </a>
+      <a class="btn btn--ghost" href={current ? put('/#kontakt') : '#kontakt'}>
+        <span>Kako do nas</span>
+        <Icon name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <div class="ftr__max wrap" aria-hidden="true" data-ftr-max>
+    <span>Max</span>
+  </div>
+
+  <div class="ftr__bottom wrap">
+    <a href={current ? put('/') : '#top'} class="ftr__logo" aria-label={current ? `${site.name} — početna` : `${site.name} — na vrh stranice`}>
+      <Wordmark />
+    </a>
+
+    <nav aria-label="Podnožje">
+      <ul class="ftr__nav">
+        {
+          nav.map((item) => (
+            <li>
+              <a class="ftr__link" href={put(item.href)}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <address class="ftr__addr">
+      {site.address.street}, {site.address.postalCode} {site.address.city}<br />
+      <span>{site.hours.map((h) => `${h.short} ${h.time}`).join(' · ')}</span>
+      <a class="ftr__link" href={site.phone.href}>{site.phone.display}</a>
+      <Proto />
+    </address>
+
+    <p class="ftr__legal">
+      © {year} {site.name}
+      <a class="ftr__top" href="#top">
+        Na vrh <Icon name="arrow-up" />
+      </a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    container-type: inline-size;
+    padding-top: var(--section);
+    overflow: clip;
+  }
+
+  .ftr__cta {
+    display: grid;
+    gap: var(--s-6);
+    justify-items: start;
+  }
+
+  .ftr__actions {
+    margin-top: var(--s-2);
+  }
+
+  .ftr__text {
+    max-width: 40ch;
+  }
+
+  .ftr__title {
+    max-width: 14ch;
+  }
+
+  .ftr__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .ftr__max {
+    --max-em: 3.62;
+    margin-top: clamp(4rem, 9vw, 8rem);
+    font-family: var(--font-display);
+    font-stretch: 150%;
+    font-weight: 900;
+    font-size: calc((min(100cqi, var(--page)) - 2 * var(--gutter)) / var(--max-em));
+    line-height: 0.74;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: max(1px, 0.1vw) var(--line-strong);
+    user-select: none;
+  }
+
+  .ftr__bottom {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: var(--s-6);
+    align-items: start;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    padding-block: var(--s-6);
+    border-top: 1px solid var(--line);
+    font-size: var(--t-small);
+    color: var(--chalk-2);
+  }
+
+  .ftr__logo {
+    grid-column: 1 / 4;
+    justify-self: start;
+    padding-block: var(--s-2);
+    color: var(--chalk);
+  }
+
+  .ftr__bottom nav {
+    grid-column: 4 / 8;
+  }
+
+  .ftr__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-5);
+  }
+
+  .ftr__link {
+    display: inline-block;
+    padding-block: var(--s-2);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .ftr__link:hover {
+    color: var(--chalk);
+  }
+
+  .ftr__addr {
+    grid-column: 8 / 11;
+    font-style: normal;
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+  }
+
+  .ftr__legal {
+    grid-column: 11 / -1;
+    display: grid;
+    gap: var(--s-2);
+    justify-items: end;
+    text-align: right;
+  }
+
+  .ftr__top {
+    display: inline-flex;
+    padding-block: var(--s-2);
+    align-items: center;
+    gap: var(--s-2);
+    color: var(--chalk);
+  }
+
+  .ftr__top :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .ftr__top:hover :global(svg) {
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 960px) {
+    .ftr__logo,
+    .ftr__bottom nav,
+    .ftr__addr,
+    .ftr__legal {
+      grid-column: 1 / -1;
+    }
+
+    .ftr__legal {
+      justify-items: start;
+      text-align: left;
+    }
+  }
+
+  /* Telefon: navigacija u dve kolone sa punom visinom za prst,
+     autorska prava i „Na vrh" u jednom redu na dnu */
+  @media (max-width: 560px) {
+    .ftr__actions .btn {
+      flex: 1 1 100%;
+    }
+
+    .ftr__nav {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 var(--gap);
+    }
+
+    .ftr__nav .ftr__link {
+      display: block;
+      padding-block: var(--s-3);
+      border-bottom: 1px solid var(--line);
+      color: var(--chalk);
+    }
+
+    .ftr__addr {
+      gap: var(--s-1);
+    }
+
+    .ftr__legal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--s-4);
+      border-top: 1px solid var(--line);
+    }
+
+    .ftr__top {
+      padding-block: var(--s-3);
+    }
+  }
+</style>

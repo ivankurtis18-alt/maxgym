@@ -1,0 +1,124 @@
+---
+import Media from './Media.astro';
+---
+
+<section class="sala section" id="sala" aria-labelledby="sala-title">
+  <div class="wrap grid">
+    <h2 class="sala__label label eyebrow" id="sala-title">Sala</h2>
+
+    <p class="sala__statement" data-split="text">
+      <strong>Max Gym &amp; Fitness je teretana za ljude koji dolaze da treniraju, ne da se pokazuju.</strong>
+      Prostor je napravljen za rad, oprema je tu da se koristi, a atmosfera te nosi i onda kad ti se
+      ne da. <strong>Prvi mesec ili deseta godina pod šipkom — ovde se računa sledeći trening.</strong>
+    </p>
+
+    <figure class="sala__small media" data-img>
+      <Media image="gymWork" ratio={4 / 5} widths={[400, 640, 900]} sizes="(min-width: 961px) 28vw, 60vw" />
+    </figure>
+
+    <div class="sala__note" data-reveal>
+      <p class="muted">
+        Treniraš za snagu, za formu ili da isključiš glavu posle dugog dana — sve u sali je podređeno
+        tome da trening bude dobar.
+      </p>
+      <a class="link" href="#trening">Šta te čeka u sali</a>
+    </div>
+
+    <figure class="sala__large media" data-img="parallax">
+      <Media image="gymFloor" ratio={3 / 2} sizes="(min-width: 961px) 62vw, 100vw" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .sala .grid {
+    row-gap: var(--head-gap);
+  }
+
+  .sala__label {
+    grid-column: 1 / -1;
+  }
+
+  /* Glavni fokus sekcije: izjava, ne naslov. Istaknut deo je
+     kreda, ostatak utišan — čita se kao pull-quote. */
+  .sala__statement {
+    grid-column: 4 / -1;
+    margin-top: calc(var(--s-6) - var(--head-gap));
+    font-size: var(--t-statement);
+    font-weight: 500;
+    line-height: 1.16;
+    letter-spacing: -0.015em;
+    color: var(--chalk-3);
+  }
+
+  .sala__statement strong {
+    font-weight: 500;
+    color: var(--chalk);
+  }
+
+  .sala__small {
+    grid-column: 1 / 5;
+    grid-row: 3;
+    aspect-ratio: var(--r-portrait);
+    align-self: start;
+    margin-top: clamp(3rem, 12vw, 12rem);
+  }
+
+  .sala__note {
+    grid-column: 1 / 5;
+    grid-row: 4;
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+    max-width: 34ch;
+  }
+
+  .sala__large {
+    grid-column: 5 / -1;
+    grid-row: 3 / 5;
+    aspect-ratio: var(--r-land);
+    align-self: start;
+    margin-right: calc(-1 * var(--gutter));
+  }
+
+  @media (min-width: 1600px) {
+    .sala__large {
+      margin-right: 0;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .sala__statement {
+      grid-column: 1 / -1;
+    }
+
+    .sala__large {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      margin-inline: calc(-1 * var(--gutter));
+    }
+
+    .sala__small {
+      grid-column: 1 / 8;
+      grid-row: auto;
+      margin-top: 0;
+    }
+
+    .sala__note {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+
+  @media (min-width: 561px) and (max-width: 960px) {
+    .sala__small {
+      grid-column: 1 / 6;
+    }
+
+    .sala__note {
+      grid-column: 7 / -1;
+      grid-row: span 1;
+      align-self: end;
+    }
+  }
+</style>
