@@ -168,9 +168,26 @@ document.querySelectorAll<HTMLElement>('[data-index]').forEach((index) => {
       progress.style.setProperty('--p', String(first + p * (1 - first)));
       count.textContent = String(step + 1).padStart(2, '0');
     };
+    // Smernica „Prevuci" nestaje posle prvog prevlačenja; jednokratni
+    // mig karata kada spisak uđe u kadar (samo kada se zaista prevlači)
+    const swiped = () => progress.classList.add('is-swiped');
+    const nudge = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        nudge.disconnect();
+        const scrollable = list.scrollWidth > list.clientWidth + 1;
+        if (scrollable && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          list.classList.add('is-nudge');
+        }
+      },
+      { threshold: 0.6 },
+    );
+    nudge.observe(list);
+
     list.addEventListener(
       'scroll',
       () => {
+        if (list.scrollLeft > 8) swiped();
         if (!ticking) {
           ticking = true;
           requestAnimationFrame(update);

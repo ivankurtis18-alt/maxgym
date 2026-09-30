@@ -8,6 +8,7 @@
  * preko cele širine jedna ispod druge).
  */
 import type { ImageKey } from '../data/images';
+import Icon from './Icon.astro';
 import Media from './Media.astro';
 import { put } from '../lib/putanja';
 
@@ -101,6 +102,7 @@ const items: {
       <div class="idx__progress" aria-hidden="true" data-index-progress>
         <span class="idx__count label"><span data-index-count>01</span> / {String(items.length).padStart(2, '0')}</span>
         <span class="idx__track"><span class="idx__fill"></span></span>
+        <span class="idx__hint label">Prevuci <Icon name="arrow" /></span>
       </div>
 
       <div class="idx__stage" aria-hidden="true">
@@ -356,6 +358,34 @@ const items: {
       background: var(--chalk);
       transform: scaleX(var(--p, 0.2));
       transform-origin: left;
+    }
+
+    /* Smernica: nestaje posle prvog prevlačenja (main.ts → .is-swiped) */
+    .idx__hint {
+      gap: var(--s-2);
+      color: var(--chalk);
+      transition: opacity var(--dur) var(--ease);
+    }
+
+    .idx__hint :global(svg) {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .idx__progress.is-swiped .idx__hint {
+      opacity: 0;
+    }
+
+    /* Jednokratni „mig" kada spisak prvi put uđe u kadar — karte se
+       pomere ulevo i vrate, pa se vidi da se prevlače */
+    .idx__list.is-nudge .idx__row {
+      animation: idx-nudge 1.1s var(--ease) 0.2s;
+    }
+
+    @keyframes idx-nudge {
+      40% {
+        transform: translateX(-2.75rem);
+      }
     }
   }
 
